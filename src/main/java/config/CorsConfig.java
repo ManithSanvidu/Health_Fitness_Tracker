@@ -1,0 +1,23 @@
+package config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.*;
+
+@Configuration
+public class CorsConfig {
+    
+    @Bean
+    public WebMvcConfigurer corsConfigurer(){
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry){
+                registry.addMapping("/**")
+                        // Development-friendly CORS: allow the React dev server regardless of host (localhost / 127.0.0.1) and port.
+                        .allowedOriginPatterns("*")
+                        .allowedMethods("*")
+                        .allowedHeaders("*");
+            }
+        };
+    }
+}
