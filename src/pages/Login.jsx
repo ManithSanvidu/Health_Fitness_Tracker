@@ -8,10 +8,14 @@ export default function Login() {
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const API_URL = process.env.REACT_APP_API_URL;
+    const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "");
 
     const handleLoginSuccess = async (credentialResponse) => {
         try {
+            if (!credentialResponse?.credential) {
+                throw new Error("Invalid Google response");
+            }
+
             if (!API_URL) {
                 throw new Error("API URL not configured");
             }
@@ -21,38 +25,45 @@ export default function Login() {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     token: credentialResponse.credential
                 })
             });
 
+            let data;
+            const text = await response.text();
+
+            try {
+                data = text ? JSON.parse(text) : {};
+            } catch {
+                throw new Error("Invalid server response");
+            }
+
             if (!response.ok) {
-                const errText = await response.text();
-                throw new Error(errText || `Login failed (${response.status})`);
+                throw new Error(data?.message || `Login failed (${response.status})`);
             }
 
-            const data = await response.json();
+            const displayName =
+                data?.username ||
+                (data?.email ? data.email.split("@")[0] : "User");
 
-            const displayName = data.username || (data.email && data.email.split("@")[0]) || "User";
-
-            localStorage.setItem("sessionId", data.sessionId);
-            localStorage.setItem("email", data.email);
-            localStorage.setItem("username", displayName);
-            if (data.userId != null) {
-                localStorage.setItem("userId", String(data.userId));
-            }
+            if (data?.sessionId) localStorage.setItem("sessionId", data.sessionId);
+            if (data?.email) localStorage.setItem("email", data.email);
+            if (displayName) localStorage.setItem("username", displayName);
+            if (data?.userId != null) localStorage.setItem("userId", String(data.userId));
 
             login({
-                email: data.email,
+                email: data?.email,
                 username: displayName,
-                sessionId: data.sessionId,
-                userId: data.userId
+                sessionId: data?.sessionId,
+                userId: data?.userId
             });
 
             navigate("/dashboard");
         } catch (error) {
             console.error("Login error:", error);
-            alert(error.message || "Login failed");
+            alert(error?.message || "Login failed");
         }
     };
 
@@ -66,9 +77,8 @@ export default function Login() {
                 <div className="login-wrapper">
                     <GoogleLogin
                         onSuccess={handleLoginSuccess}
-                        onError={() => {
-                            console.log('Login Failed');
-                        }}
+                        onError={() => alert("Google Login Failed")}
+                        useOneTap
                     />
                 </div>
                 <div className="auth-footer">
