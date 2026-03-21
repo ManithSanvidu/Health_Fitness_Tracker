@@ -9,7 +9,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "https://fitlife-tracker.netlify.app")
+@CrossOrigin(origins = "https://fitlife-foryou.netlify.app")
 public class TrackerController {
 
     private final TrackerService trackerService;

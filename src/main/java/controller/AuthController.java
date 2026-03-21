@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "https://fitlife-tracker.netlify.app/")
+@CrossOrigin(origins = "https://fitlife-foryou.netlify.app")
 public class AuthController {
 
     private final AuthService authService;
