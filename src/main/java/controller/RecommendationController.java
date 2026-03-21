@@ -8,7 +8,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://fitlife-foryou.netlify.app")
 public class RecommendationController {
 
     private final RecommendationService recommendationService;
