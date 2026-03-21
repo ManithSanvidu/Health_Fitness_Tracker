@@ -22,25 +22,18 @@ export const AuthProvider = ({ children }) => {
                 phone: phone || null
             });
         }
-
-        // Fetch latest user info from backend
-        fetch(`${process.env.REACT_APP_API_URL}/api/user/${email}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data) {
-                    // Update user state with backend data
-                    setUser(prev => ({
-                        ...prev,
-                        ...data
-                    }));
-
-                    // Optionally sync backend data to localStorage
-                    if (data.phone) localStorage.setItem("phone", data.phone);
-                }
-            })
-            .catch(err => console.error("Failed to fetch user data:", err));
-
-    }, []);
+        
+       if (email) {
+    fetch(`${process.env.REACT_APP_API_URL}/api/auth/profile?email=${email}`)
+        .then(res => res.json())
+        .then(data => {
+            setUser(prev => ({
+                ...prev,
+                ...data
+            }));
+        })
+        .catch(err => console.error("Failed to fetch user data:", err));
+}
 
     const login = (userData) => {
         setUser(userData);
