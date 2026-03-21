@@ -8,9 +8,15 @@ export default function Login() {
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const handleLoginSuccess = async (credentialResponse) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+            if (!API_URL) {
+                throw new Error("API URL not configured");
+            }
+
+            const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
