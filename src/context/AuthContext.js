@@ -6,7 +6,6 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        // Get user info from localStorage first
         const email = localStorage.getItem("email");
         const sessionId = localStorage.getItem("sessionId");
         const username = localStorage.getItem("username");
@@ -21,19 +20,18 @@ export const AuthProvider = ({ children }) => {
                 userId: userId ? Number(userId) : undefined,
                 phone: phone || null
             });
+
+            fetch(`${process.env.REACT_APP_API_URL}/api/auth/profile?email=${email}`)
+                .then(res => res.json())
+                .then(data => {
+                    setUser(prev => ({
+                        ...prev,
+                        ...data
+                    }));
+                })
+                .catch(err => console.error("Failed to fetch user data:", err));
         }
-        
-       if (email) {
-    fetch(`${process.env.REACT_APP_API_URL}/api/auth/profile?email=${email}`)
-        .then(res => res.json())
-        .then(data => {
-            setUser(prev => ({
-                ...prev,
-                ...data
-            }));
-        })
-        .catch(err => console.error("Failed to fetch user data:", err));
-}
+    }, []);
 
     const login = (userData) => {
         setUser(userData);
