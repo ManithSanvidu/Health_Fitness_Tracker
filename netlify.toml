@@ -1,0 +1,9 @@
+[build]
+  base = "health-fitness-frontend"
+  command = "npm run build"
+  publish = "health-fitness-frontend/build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
