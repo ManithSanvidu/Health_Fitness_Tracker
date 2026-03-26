@@ -1,7 +1,7 @@
 [build]
-  base = "health-fitness-frontend"
+  base = "pages"
   command = "npm run build"
-  publish = "health-fitness-frontend/build"
+  publish = "pages/build"
 
 [[redirects]]
   from = "/*"
