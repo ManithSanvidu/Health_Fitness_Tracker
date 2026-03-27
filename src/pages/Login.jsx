@@ -26,6 +26,11 @@ export default function Login() {
             const data = await response.json().catch(() => ({}));
 
             if (!response.ok) {
+                if (response.status === 405) {
+                    throw new Error(
+                        "Auth API is not reachable (405). Configure REACT_APP_API_URL to your backend service URL."
+                    );
+                }
                 const reason = data?.message || data?.error || `Login failed (${response.status})`;
                 throw new Error(reason);
             }
