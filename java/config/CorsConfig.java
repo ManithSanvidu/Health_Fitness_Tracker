@@ -20,7 +20,7 @@ public class CorsConfig {
             "http://localhost:3001",
             "http://127.0.0.1:3000",
             "http://127.0.0.1:3001",
-            "https://fitlife-foryou.netlify.app"
+            "https://health-fitness-tracker-three.vercel.app" 
     );
 
     @Bean
