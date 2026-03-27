@@ -22,10 +22,14 @@ public class CorsConfig {
             "http://127.0.0.1:3001",
             "https://health-fitness-tracker-three.vercel.app" 
     );
+    private static final List<String> DEFAULT_ALLOWED_ORIGIN_PATTERNS = Arrays.asList(
+            "https://*.vercel.app"
+    );
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource(
-            @Value("${cors.allowed-origins:}") String allowedOrigins) {
+            @Value("${cors.allowed-origins:}") String allowedOrigins,
+            @Value("${cors.allowed-origin-patterns:}") String allowedOriginPatterns) {
 
         List<String> origins = Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)
@@ -36,8 +40,18 @@ public class CorsConfig {
             origins = new ArrayList<>(DEFAULT_ALLOWED_ORIGINS);
         }
 
+        List<String> originPatterns = Arrays.stream(allowedOriginPatterns.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        if (originPatterns.isEmpty()) {
+            originPatterns = new ArrayList<>(DEFAULT_ALLOWED_ORIGIN_PATTERNS);
+        }
+
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(origins);
+        configuration.setAllowedOriginPatterns(originPatterns);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
