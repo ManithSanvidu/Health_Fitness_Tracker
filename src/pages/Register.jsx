@@ -19,7 +19,7 @@ export default function Register() {
     setError("");
     setIsSubmitting(true);
     try {
-      const response = await fetch(apiUrl("/api/auth/register"), {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -30,17 +30,14 @@ export default function Register() {
       });
 
       const data = await response.json().catch(() => ({}));
+
       if (!response.ok) {
-        if (response.status === 405) {
-          throw new Error(
-            "Auth API is not reachable (405). Configure REACT_APP_API_URL to your backend service URL."
-          );
-        }
         const reason = data?.message || data?.error || `Registration failed (${response.status})`;
         throw new Error(reason);
       }
 
       const displayName = data?.username || (data?.email ? data.email.split("@")[0] : "User");
+
       if (data?.sessionId) localStorage.setItem("sessionId", data.sessionId);
       if (data?.email) localStorage.setItem("email", data.email);
       if (displayName) localStorage.setItem("username", displayName);
@@ -126,4 +123,3 @@ export default function Register() {
     </div>
   );
 }
-
