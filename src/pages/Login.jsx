@@ -15,24 +15,33 @@ export default function Login() {
         e.preventDefault();
         setError("");
         setIsSubmitting(true);
+
         try {
-            const response = await fetch(apiUrl("/api/auth/login"), {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: email.trim(), password })
-            });
+            const response = await fetch(
+                `${process.env.REACT_APP_API_URL}/api/auth/login`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: email.trim(),
+                        password
+                    })
+                }
+            );
 
             const data = await response.json().catch(() => ({}));
 
             if (!response.ok) {
                 if (response.status === 405) {
-                    throw new Error("Auth API is not reachable (405). Configure REACT_APP_API_URL to your backend service URL.");
+                    throw new Error("Auth API is not reachable (405). Configure REACT_APP_API_URL correctly.");
                 }
                 const reason = data?.message || data?.error || `Login failed (${response.status})`;
                 throw new Error(reason);
             }
 
-            const displayName = data?.username || (data?.email ? data.email.split("@")[0] : "User");
+            const displayName =
+                data?.username ||
+                (data?.email ? data.email.split("@")[0] : "User");
 
             if (data?.sessionId) localStorage.setItem("sessionId", data.sessionId);
             if (data?.email) localStorage.setItem("email", data.email);
